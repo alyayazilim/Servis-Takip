@@ -5,6 +5,8 @@ class Ajax_istekleri extends CI_Controller {
 
 	function __construct() {
 		parent::__construct();
+		$this->load->model('sistem_model');
+		$this->sistemSabit = $this->sistem_model->sistemSabitleri();
 	}
 	
 	function fis_incele() {
@@ -146,7 +148,6 @@ class Ajax_istekleri extends CI_Controller {
 			endforeach;
 			echo $bilgi;
 		}
-
 	}
 
 	function kullanici_bilgi_json() {
@@ -176,7 +177,49 @@ class Ajax_istekleri extends CI_Controller {
 			$obje .= form_close()."\r\n";
 			$obje .= @$formHatasi;
 		} elseif($this->input->post('islem', true) == "duzenle") {
-			$obje = 'Düzenlenecek';
+			$turNo = $this->input->post('tur_no', true);
+			$this->load->model('sistem_model');
+			$veri = $this->sistem_model->turBilgileriGetir($turNo);
+			foreach($veri AS $bilgi) :
+				$tur_adi		= $bilgi->tur_adi;
+				$tur_resim	= $bilgi->tur_resim;
+			endforeach;
+			$obje  = form_open_multipart('sistem_yonetimi/cihaz_tur_duzenle', 'name="cihazTurForm" id="cihazTurForm" class="yukle_form" onsubmit="return cihaz_tur_duzenle_kontrol();"')."\r\n";
+			$obje .= '<img src="'.base_url().'resimler/cihazlar/'.$tur_resim.'" style="display:block;margin:0px auto;width:24px;height:24px;margin-bottom:10px;">';
+			$obje .= form_input('tur_adi', $tur_adi, 'id="tur_adi" autocomplete="off"');
+			$obje .= '<input type="file" id="tur_resim" name="tur_resim" class="griinput" accept="image/png" />'."\r\n";
+			$obje .= form_hidden('tur_no', $turNo);
+			$obje .= form_submit('kaydetButon', 'Güncelle', 'id="kaydetButon"')."\r\n";
+			$obje .= form_close()."\r\n";
+			$obje .= @$formHatasi;
+		}
+		echo $obje;
+	}
+
+	function cihaz_marka_ekle() {
+		if($this->input->post('islem', true) == "ekle") {
+			$obje = form_open_multipart('sistem_yonetimi/cihaz_marka_kaydet', 'name="cihazMarkaForm" id="cihazMarkaForm" class="yukle_form" onsubmit="return cihaz_marka_kaydet_kontrol();"')."\r\n";
+			$obje .= form_input('marka_adi', set_value('marka_adi'), 'id="marka_adi" autocomplete="off" placeholder="Marka" onkeyup="markaMukerrerKontrol(this);"');
+			$obje .= '<input type="file" id="marka_resim" name="marka_resim" class="griinput" accept="image/png" />'."\r\n";
+			$obje .= form_submit('kaydetButon', 'Kaydet', 'id="kaydetButon"')."\r\n";
+			$obje .= form_close()."\r\n";
+			$obje .= @$formHatasi;
+		} elseif($this->input->post('islem', true) == "duzenle") {
+			$markaNo = $this->input->post('marka_no', true);
+			$this->load->model('sistem_model');
+			$veri = $this->sistem_model->markaBilgileriGetir($markaNo);
+			foreach($veri AS $bilgi) :
+				$marka_adi		= $bilgi->marka_adi;
+				$marka_resim	= $bilgi->marka_resim;
+			endforeach;
+			$obje  = form_open_multipart('sistem_yonetimi/cihaz_marka_duzenle', 'name="cihazMarkaForm" id="cihazMarkaForm" class="yukle_form" onsubmit="return cihaz_marka_duzenle_kontrol();"')."\r\n";
+			$obje .= '<img src="'.base_url().'resimler/markalar/'.$marka_resim.'" style="display:block;margin:0px auto;width:24px;height:24px;margin-bottom:10px;">';
+			$obje .= form_input('marka_adi', $marka_adi, 'id="marka_adi" autocomplete="off"');
+			$obje .= '<input type="file" id="marka_resim" name="marka_resim" class="griinput" accept="image/png" />'."\r\n";
+			$obje .= form_hidden('marka_no', $markaNo);
+			$obje .= form_submit('kaydetButon', 'Güncelle', 'id="kaydetButon"')."\r\n";
+			$obje .= form_close()."\r\n";
+			$obje .= @$formHatasi;
 		}
 		echo $obje;
 	}

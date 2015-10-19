@@ -6,14 +6,16 @@ class Kullanici_islem extends CI_Controller {
 	function __construct() {
 		parent::__construct();
 		//$this->sistem_model->lisan_kontrol();
+		$this->load->model('sistem_model');
+		$this->sistemSabit = $this->sistem_model->sistemSabitleri();
 	}
 	
 	function kullanici_listele() {
 		$veri = array(
-			
 			'gosterilecekSayfa'	=> 'kullanici_listele'
 		);
-		$this->load->view('taslak', $veri);
+		$bilgi = array_merge($veri, $this->sistemSabit);
+		$this->load->view('taslak', $bilgi);
 	}
 
 }

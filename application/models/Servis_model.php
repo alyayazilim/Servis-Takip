@@ -99,8 +99,12 @@ class Servis_model extends CI_Model {
 		return date('y', time()).'-KT'.str_pad($isNo+1, 4, "0", STR_PAD_LEFT);
 	}
 
-	function markalar() {
-		$sorgu = $this->mySunucu->query('SELECT marka_id, marka_adi FROM markalar ORDER BY marka_adi ASC');
+	function markalar($markaNo=false) {
+		if($markaNo==false) {
+			$sorgu = $this->mySunucu->query('SELECT marka_no, marka_adi, marka_resim FROM markalar ORDER BY marka_adi ASC');
+		} else {
+			$sorgu = $this->mySunucu->query('SELECT marka_no, marka_adi, marka_resim FROM markalar WHERE marka_no='.$markaNo.' ORDER BY marka_adi ASC');
+		}
 		return $sorgu->result();
 	}
 

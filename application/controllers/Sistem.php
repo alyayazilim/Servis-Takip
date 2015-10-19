@@ -5,7 +5,8 @@ class Kullanici extends CI_Controller {
 
 	function __construct() {
 		parent::__construct();
-	}
+		$this->load->model('sistem_model');
+		$this->sistemSabit = $this->sistem_model->sistemSabitleri();	}
 	
 	function index() {
 		$this->listele();
@@ -37,7 +38,8 @@ class Kullanici extends CI_Controller {
 			),
 			'gosterilecekSayfa'	=> 'sistem_ayar'
 		);
-		$this->load->view('taslak', $veri);
+		$bilgi = array_merge($veri, $this->sistemSabit);
+		$this->load->view('taslak', $bilgi);
 	}
 
 }

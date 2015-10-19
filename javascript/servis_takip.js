@@ -592,46 +592,19 @@ function kBilgiYaz(kNo) {
 	}
 }
 
-function cihazTurGetir(nesne, resimAdi, turNo) {
-	var sahneDivi = document.getElementById('turDokum');
-	sahneDivi.innerHTML="";
-	
-	var resim = document.createElement("img");
-	resim.setAttribute('src', domain+"/resimler/cihazlar/"+resimAdi);
-	resim.setAttribute('style', 'display:block;margin:0px auto;width:24px;height:24px;margin-bottom:10px;');
-
-	var form = document.createElement("form");
-	form.setAttribute('method',"post");
-	form.setAttribute('action', domain+"/sistem_yonetimi/cihaz_tur_guncelle");
-
-	var cTurInput = document.createElement("input");
-	cTurInput.setAttribute('type', "text");
-	cTurInput.setAttribute('name', "cihaz_turu");
-	var cihazTuru = nesne.firstElementChild.innerHTML;
-	cTurInput.setAttribute('value', cihazTuru);
-	cTurInput.setAttribute('autocomplete', 'off');
-
-	var turResim = document.createElement("input");
-	turResim.setAttribute('type', "file");
-	turResim.setAttribute('name', "tur_resim");
-	turResim.setAttribute('class', "griinput");
-
-	var cTurNo = document.createElement("input");
-	cTurNo.setAttribute('type', "hidden");
-	cTurNo.setAttribute('name', "tur_no");
-	cTurNo.setAttribute('value', turNo);
-
-	var kaydetTus = document.createElement("input");
-	kaydetTus.setAttribute('type',"submit");
-	kaydetTus.setAttribute('value',"Kaydet");
-	kaydetTus.setAttribute('style',"margin-top:10px;");
-
-	form.appendChild(resim);
-	form.appendChild(cTurInput);
-	form.appendChild(turResim);
-	form.appendChild(cTurNo);
-	form.appendChild(kaydetTus);
-	sahneDivi.appendChild(form);
+function cihazTurGetir(turNo) {
+	var sahneDivi		= document.getElementById('turDokum');
+	postVerisi			= "islem=duzenle&tur_no="+turNo;
+	var istek			= nesneOlustur();
+	var islemDosyasi	= domain+"/ajax_istekleri/cihaz_tur_ekle";
+	istek.open('POST', islemDosyasi, true);
+	istek.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+	istek.send(postVerisi);
+	istek.onreadystatechange = function() {
+		if(istek.readyState == 4) {
+			sahneDivi.innerHTML=istek.responseText;			
+		}
+	}
 }
 
 function turMukerrerKontrol(obje) {
@@ -680,5 +653,47 @@ function cihaz_tur_kaydet_kontrol() {
 	if(dosyaAdresi=="") {
 		alert('Resim Seçmelisiniz');
 		return false;
+	}
+}
+
+function cihaz_tur_duzenle_kontrol() {
+	var cihazTuru	= document.getElementById("cihaz_turu");
+	var tCihazTuru	= cihazTuru.value.trim();
+	var dosyaAdresi	= document.getElementById("tur_resim").value;
+	if(tCihazTuru.length < 3) {
+		alert("Cihaz Türü En az 3 Karakter Olmalıdır !!!");
+		cihazTuru.style.border="1px solid #F00";
+		cihazTuru.focus();
+		return false;
+	}
+}
+
+function yeniMarkaEkle(nesne) {
+	var sahneDivi		= document.getElementById('turDokum');
+	postVerisi			= "islem=ekle";
+	var istek			= nesneOlustur();
+	var islemDosyasi	= domain+"/ajax_istekleri/cihaz_marka_ekle";
+	istek.open('POST', islemDosyasi, true);
+	istek.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+	istek.send(postVerisi);
+	istek.onreadystatechange = function() {
+		if(istek.readyState == 4) {
+			sahneDivi.innerHTML=istek.responseText;			
+		}
+	}
+}
+
+function cihazMarkaGetir(markaNo) {
+	var sahneDivi		= document.getElementById('turDokum');
+	postVerisi			= "islem=duzenle&marka_no="+markaNo;
+	var istek			= nesneOlustur();
+	var islemDosyasi	= domain+"/ajax_istekleri/cihaz_marka_ekle";
+	istek.open('POST', islemDosyasi, true);
+	istek.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+	istek.send(postVerisi);
+	istek.onreadystatechange = function() {
+		if(istek.readyState == 4) {
+			sahneDivi.innerHTML=istek.responseText;			
+		}
 	}
 }

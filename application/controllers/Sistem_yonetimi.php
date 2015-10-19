@@ -5,6 +5,8 @@ class Sistem_yonetimi extends CI_Controller {
 
 	function __construct() {
 		parent::__construct();
+		$this->load->model('sistem_model');
+		$this->sistemSabit = $this->sistem_model->sistemSabitleri();
 	}
 	
 	function index() {
@@ -47,7 +49,8 @@ class Sistem_yonetimi extends CI_Controller {
 		$veri = array(
 			'gosterilecekSayfa'	=> 'sistem_ayar'
 		);
-		$this->load->view('taslak', $veri);
+		$bilgi = array_merge($veri, $this->sistemSabit);
+		$this->load->view('taslak', $bilgi);
 	}
 
 	function bakim_calismasi() {
@@ -72,7 +75,8 @@ class Sistem_yonetimi extends CI_Controller {
 			'formHatasi'	=> '',
 			'gosterilecekSayfa'	=> 'sistem_degisken'
 		);
-		$this->load->view('taslak', $veri);
+		$bilgi = array_merge($veri, $this->sistemSabit);
+		$this->load->view('taslak', $bilgi);
 	}
 
 	function sistem_degisken_kontrol() {
@@ -130,44 +134,51 @@ class Sistem_yonetimi extends CI_Controller {
 			'turVerileri'			=> $this->servis_model->cihazTurleri(),
 			'gosterilecekSayfa'	=> 'cihaz_tur'
 		);
-		$this->load->view('taslak', $veri);
+		$bilgi = array_merge($veri, $this->sistemSabit);
+		$this->load->view('taslak', $bilgi);
 	}
 
 	function markalar() {
+		$this->load->model('servis_model');
 		$veri = array(
+			'markaVerileri'		=> $this->servis_model->markalar(),
 			'gosterilecekSayfa'	=> 'markalar'
 		);
-		$this->load->view('taslak', $veri);
+		$bilgi = array_merge($veri, $this->sistemSabit);
+		$this->load->view('taslak', $bilgi);
 	}
 
 	function gorsel_ayar() {
 		$veri = array(
 			'gosterilecekSayfa'	=> 'gorsel_ayar'
 		);
-		$this->load->view('taslak', $veri);
+		$bilgi = array_merge($veri, $this->sistemSabit);
+		$this->load->view('taslak', $bilgi);
 	}
 
 	function kullanici_ayar() {
 		$veri = array(
 			'gosterilecekSayfa'	=> 'kullanici_ayar'
 		);
-		$this->load->view('taslak', $veri);
+		$bilgi = array_merge($veri, $this->sistemSabit);
+		$this->load->view('taslak', $bilgi);
 	}
 
 	function yonetici_ayar() {
 		$veri = array(
 			'gosterilecekSayfa'	=> 'yonetici_ayar'
 		);
-		$this->load->view('taslak', $veri);
+		$bilgi = array_merge($veri, $this->sistemSabit);
+		$this->load->view('taslak', $bilgi);
 	}
 
-	function cihaz_tur_guncelle() {
+	function cihaz_tur_duzenle() {
 		$this->load->model('servis_model');
 		$cBilgiler = $this->servis_model->cihazTurleri($this->input->post('tur_no', true));
+		foreach($cBilgiler AS $cBilgi) :
+			$turResmi = $cBilgi->tur_resim;
+		endforeach;
 		if($_FILES['tur_resim']['name']) {
-			foreach($cBilgiler AS $cBilgi) :
-				$turResmi = $cBilgi->tur_resim;
-			endforeach;
 			unlink('resimler/cihazlar/'.$turResmi);
 			$yeniDosyaAdi = $this->servis_model->dosyaAdiOlustur($ozNetlik=FALSE, $_FILES['tur_resim']['name']);
 			$ayar = array(
@@ -180,17 +191,17 @@ class Sistem_yonetimi extends CI_Controller {
 				echo $this->upload->display_errors('<div class="formHatasi">', '</div>');
 			}
 			$cTurBilgi	= array(
-				'tur_adi'		=> $this->input->post('firma_adi', TRUE),
+				'tur_adi'		=> $this->input->post('tur_adi', TRUE),
 				'tur_resim'		=> $yeniDosyaAdi
 			);
 		} else {
 			$cTurBilgi	= array(
-				'tur_adi'		=> $this->input->post('firma_adi', TRUE),
+				'tur_adi'		=> $this->input->post('tur_adi', TRUE),
 				'tur_resim'		=> $turResmi
 			);
 		}
 		$this->load->model('sistem_model');
-		$this->sistem_model->cihazTurGuncelle($this->input->post('tur_no', true), $kayitVerileri);
+		$this->sistem_model->cihazTurGuncelle($this->input->post('tur_no', true), $cTurBilgi);
 		redirect('sistem_yonetimi/cihaz_tur');
 	}
 
@@ -224,6 +235,15 @@ class Sistem_yonetimi extends CI_Controller {
 		unlink('resimler/cihazlar/'.$resimAdi);
 		$this->sistem_model->cihaz_tur_sil($turNo);
 		redirect('sistem_yonetimi/cihaz_tur');
+	}
+
+	function marka_sil() {
+		$markaNo = $this->uri->segment(3);
+		$this->load->model('sistem_model');
+		$resimAdi = $this->sistem_model->cihazMarkaResmiGetir($markaNo);
+		unlink('resimler/markalar/'.$resimAdi);
+		$this->sistem_model->cihaz_tur_sil($turNo);
+		redirect('sistem_yonetimi/markalar');
 	}
 
 }

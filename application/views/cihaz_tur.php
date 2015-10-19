@@ -10,7 +10,7 @@
 						<img src="'.base_url().'resimler/sil_aktif.png">
 					</div>
 				</a>
-				<a href="javascript:;" onclick="cihazTurGetir(this, \''.$turler->tur_resim.'\', '.$turler->tur_no.');">
+				<a href="javascript:;" onclick="cihazTurGetir('.$turler->tur_no.');">
 					<div class="ctIsim" clearfix id="'.$turler->tur_no.'">'.$turler->tur_adi.'</div>
 				</a>';
 			endforeach;

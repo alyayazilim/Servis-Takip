@@ -1,7 +1,22 @@
 <?php header("Content-type:text/html; charset=utf-8");
 	if(!defined('BASEPATH')) exit('Bu Sayfaya Direk Erişim Sağlayamazsınız');
 
-	echo 'markalar.php';
+	echo '<div id="dikeyOrtala">';
+		echo '<div class="jumbotron cihaz_tur golge ortala">'."\r\n";
+		echo '<a class="ctEkle" href="javascript:;" onclick="yeniMarkaEkle(this);"><img src="'.base_url().'resimler/ekle.png"></a>'."\r\n";
+			foreach($markaVerileri AS $marka) :
+				echo '<a href="'.base_url().'sistem_yonetimi/marka_sil/'.$marka->marka_no.'"  onclick="return confirm(\''.@$marka->marka_adi.' isimli Markayı silmek istediğine emin misin?\');">
+					<div class="ctSil" id="'.$marka->marka_no.'">
+						<img src="'.base_url().'resimler/sil_aktif.png">
+					</div>
+				</a>
+				<a href="javascript:;" onclick="cihazMarkaGetir('.$marka->marka_no.');">
+					<div class="ctIsim" clearfix id="'.$marka->marka_no.'">'.$marka->marka_adi.'</div>
+				</a>';
+			endforeach;
+			echo '<div id="turDokum" class="golge"></div>'."\r\n";
+		echo '</div>'."\r\n";
+	echo '</div>'."\r\n";
 
 /* markalar.php Dosyasının Sonu */
 /*  Hazırlayan Güner ARIK  */

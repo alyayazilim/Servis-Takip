@@ -8,13 +8,27 @@ class Sistem_model extends CI_Model {
 		$this->mySunucu = $this->load->database('mySunucu', TRUE);
 	}
 
+	function sistemSabitleri() {
+		$firmaBilgi = $this->mySunucu->query('SELECT ayar_degerler FROM sistem_ayar WHERE ayar_no=1');
+		foreach($firmaBilgi->result() AS $fBilgi) :
+			$fBilgiArray = unserialize($fBilgi->ayar_degerler);
+			/*$fBilgiArr = array(
+				'firma_adi'		=> $fBilgiArray->firma_adi,
+				'mail'			=> $fBilgiArray->mail,
+				'il'				=> $fBilgiArray->il,
+				'firma_logo'	=> $fBilgiArray->firma_logo
+			);*/
+		endforeach;
+		return $fBilgiArray;
+	}
+
 	function firmaBilgileriGetir() {
 		$sorgu = $this->mySunucu->query('SELECT ayar_degerler FROM sistem_ayar WHERE ayar_adi="firma_bilgileri"');
 		return $sorgu->result();
 	}
 
-	function turBilgileriGetir() {
-		$sorgu = $this->mySunucu->query('SELECT ayar_degerler FROM sistem_ayar WHERE ayar_adi="firma_bilgileri"');
+	function turBilgileriGetir($turNo) {
+		$sorgu = $this->mySunucu->query('SELECT tur_adi, tur_resim FROM cihaz_tur WHERE tur_no='.$turNo);
 		return $sorgu->result();
 	}
 
@@ -38,9 +52,23 @@ class Sistem_model extends CI_Model {
 		return $resim;
 	}
 
+	function cihazMarkaResmiGetir($markaNo) {
+		$sorgu = $this->mySunucu->query('SELECT marka_resim FROM markalar WHERE marka_no='.$markaNo);
+		foreach($sorgu->result() AS $bilgi) :
+			$resim = $bilgi->marka_resim;
+		endforeach;
+		return $resim;
+	}
+
 	function cihaz_tur_sil($turNo) {
 		$this->mySunucu->WHERE('tur_no', $turNo);
 		$this->mySunucu->DELETE('cihaz_tur');
+		return true;
+	}
+
+	function cihaz_marka_sil($markaNo) {
+		$this->mySunucu->WHERE('marka_no', $markaNo);
+		$this->mySunucu->DELETE('markalar');
 		return true;
 	}
 
@@ -54,6 +82,10 @@ class Sistem_model extends CI_Model {
 		return $sorgu->num_rows();
 	}
 
+	function markaBilgileriGetir($markaNo) {
+		$sorgu = $this->mySunucu->query('SELECT marka_adi, marka_resim FROM markalar WHERE marka_no='.$markaNo);
+		return $sorgu->result();
+	}
 
 }
 

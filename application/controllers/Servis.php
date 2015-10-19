@@ -3,9 +3,13 @@
 
 class Servis extends CI_Controller {
 
+	var $sistemSabitleri;
+
 	function __construct() {
 		parent::__construct();
 		ini_set('display_errors', 1);
+		$this->load->model('sistem_model');
+		$this->sistemSabit = $this->sistem_model->sistemSabitleri();
 	}
 	
 	function index() {
@@ -13,7 +17,7 @@ class Servis extends CI_Controller {
 	}
 
 	function giris() {
-		$this->load->view('giris');
+		$this->load->view('giris', $this->sistemSabit);
 	}
 
 	function giris_islem() {
@@ -135,7 +139,8 @@ class Servis extends CI_Controller {
 			'durumlar'				=> $this->servis_model->durumlar(),
 			'gosterilecekSayfa'	=> 'servis_liste'
 		);
-		$this->load->view('taslak', $veri);
+		$bilgi = array_merge($veri, $this->sistemSabit);
+		$this->load->view('taslak', $bilgi);
 	}
 
 	function servis_fis_sil() {
@@ -284,7 +289,8 @@ class Servis extends CI_Controller {
 		$veri = array(
 			'gosterilecekSayfa' => 'excel_oku'
 		);
-		$this->load->view('taslak', $veri);
+		$bilgi = array_merge($veri, $this->sistemSabit);
+		$this->load->view('taslak', $bilgi);
 	}
 
 	function excel_yukle() {
@@ -301,7 +307,8 @@ class Servis extends CI_Controller {
 				'formHatasi'			=> $this->upload->display_errors('<div class="formHatasi">', '</div>'),
 				'gosterilecekSayfa'	=> 'excel_oku'
 			);
-			$this->load->view('taslak', $veri);
+			$bilgi = array_merge($veri, $this->sistemSabit);
+			$this->load->view('taslak', $bilgi);
 		} else {
 			$this->load->library('Excel');
 			$this->excel = PHPExcel_IOFactory::load('dosyalar/upload/'.$yeniDosyaAdi);

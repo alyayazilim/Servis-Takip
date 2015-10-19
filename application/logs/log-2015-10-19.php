@@ -5258,3 +5258,23 @@ ERROR - 2015-10-19 23:23:47 --> Could not find the language line "pagination_las
 ERROR - 2015-10-19 23:23:47 --> Severity: Notice --> Undefined index: tur_resim D:\Wamp\www\ci3.net\application\controllers\Sistem_yonetimi.php 167
 ERROR - 2015-10-19 23:23:47 --> Severity: Notice --> Undefined variable: turResmi D:\Wamp\www\ci3.net\application\controllers\Sistem_yonetimi.php 190
 ERROR - 2015-10-19 23:23:47 --> Severity: Notice --> Undefined variable: kayitVerileri D:\Wamp\www\ci3.net\application\controllers\Sistem_yonetimi.php 193
+ERROR - 2015-10-19 23:44:00 --> Language file contains no data: language/english/pagination_lang.php
+ERROR - 2015-10-19 23:44:00 --> Could not find the language line "pagination_first_link"
+ERROR - 2015-10-19 23:44:00 --> Could not find the language line "pagination_next_link"
+ERROR - 2015-10-19 23:44:00 --> Could not find the language line "pagination_prev_link"
+ERROR - 2015-10-19 23:44:00 --> Could not find the language line "pagination_last_link"
+ERROR - 2015-10-19 23:44:05 --> Language file contains no data: language/english/pagination_lang.php
+ERROR - 2015-10-19 23:44:05 --> Could not find the language line "pagination_first_link"
+ERROR - 2015-10-19 23:44:05 --> Could not find the language line "pagination_next_link"
+ERROR - 2015-10-19 23:44:05 --> Could not find the language line "pagination_prev_link"
+ERROR - 2015-10-19 23:44:05 --> Could not find the language line "pagination_last_link"
+ERROR - 2015-10-19 23:46:20 --> Language file contains no data: language/english/pagination_lang.php
+ERROR - 2015-10-19 23:46:20 --> Could not find the language line "pagination_first_link"
+ERROR - 2015-10-19 23:46:20 --> Could not find the language line "pagination_next_link"
+ERROR - 2015-10-19 23:46:20 --> Could not find the language line "pagination_prev_link"
+ERROR - 2015-10-19 23:46:20 --> Could not find the language line "pagination_last_link"
+ERROR - 2015-10-19 23:46:48 --> Language file contains no data: language/english/pagination_lang.php
+ERROR - 2015-10-19 23:46:48 --> Could not find the language line "pagination_first_link"
+ERROR - 2015-10-19 23:46:48 --> Could not find the language line "pagination_next_link"
+ERROR - 2015-10-19 23:46:48 --> Could not find the language line "pagination_prev_link"
+ERROR - 2015-10-19 23:46:48 --> Could not find the language line "pagination_last_link"

@@ -26,7 +26,7 @@
 					<div class="panel panel-default">
 						<div class="panel-heading">                                
 							<div class="row-fluid user-row">
-								<img src="'.base_url().'resimler/login_resim.png" class="img-responsive" alt="Kadir TUTAK - SERVİS"/>
+								<img src="'.base_url().'resimler/firma/'.$firma_logo.'" class="img-responsive" title="'.$firma_adi.'"/>
 							</div>
 						</div>
 						<div class="panel-body">

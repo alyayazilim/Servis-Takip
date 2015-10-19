@@ -628,6 +628,7 @@ ul.altLink > li > .secili {
 }
 #dikeyOrtala > .cihaz_tur {
 	width: 500px;
+	padding:2px;
 }
 .ctSil, .ctEkle {
 	width: 16px;
@@ -650,8 +651,8 @@ ul.altLink > li > .secili {
 }
 #turDokum {
 	position: absolute;
-	top: 52px;
-	right: 52px;
+	top: 24px;
+	right: 24px;
 	width: 192px;
 	height: 180px;
 	border: 1px solid #D4D2D2;
