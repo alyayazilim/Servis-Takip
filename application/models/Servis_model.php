@@ -31,8 +31,8 @@ class Servis_model extends CI_Model {
 
 	function ara($sorguDizesi, $gosterilecekKayit, $offset, $neyeGoreSirala, $siralamaYonu) {
 		$siralamaYonu		= $siralamaYonu=="desc" ? 'desc' : 'asc';
-		$sort_colums	= array('is_numarasi','gelis_tarihi','musteri_adi','durum','tur_no','marka','tur_adi','urun_kodu','urun_adi', 'seri_no');
-		$neyeGoreSirala			= (in_array($neyeGoreSirala, $sort_colums)) ? $neyeGoreSirala : 'is_numarasi';
+		$sort_colums		= array('is_numarasi','gelis_tarihi','musteri_adi','durum','tur_no','marka','tur_adi','urun_kodu','urun_adi', 'seri_no');
+		$neyeGoreSirala	= (in_array($neyeGoreSirala, $sort_colums)) ? $neyeGoreSirala : 'is_numarasi';
 		$veriSorgu	= $this->mySunucu->select('*')
 			->from('fis_bul')
 			->limit($gosterilecekKayit, $offset)
@@ -46,6 +46,8 @@ class Servis_model extends CI_Model {
 		if(strlen($sorguDizesi['nerede'])) {
 			if($sorguDizesi['nerede'] == 'sehir') {
 				$veriSorgu->like('sehir', $sorguDizesi['deger'], 'both');
+			} elseif($sorguDizesi['nerede'] == 'marka') {
+				$veriSorgu->like('marka_adi', $sorguDizesi['deger'], 'both');
 			} else {
 				$veriSorgu->like($sorguDizesi['nerede'], $sorguDizesi['deger']);
 			}
@@ -55,6 +57,7 @@ class Servis_model extends CI_Model {
 		$q = $this->mySunucu->select('COUNT(*) AS satirSayisi')
 			->from('servis_fis AS SF')
 			->join('iller AS IL', 'SF.sehir = IL.il_no', 'left')
+			->join('markalar AS MR', 'SF.marka = MR.marka_no', 'left')
 			->where('sil !=', 1);
 		if(strlen($sorguDizesi['araBas'])) {
 			$q->where('FROM_UNIXTIME(gelis_tarihi, \'%d.%m.%Y\')>=', $sorguDizesi['araBas']-1);
@@ -64,10 +67,13 @@ class Servis_model extends CI_Model {
 		}
 		if(strlen($sorguDizesi['nerede'])) {
 			if($sorguDizesi['nerede'] == 'sehir') {
-				$veriSorgu->like('IL.il_adi', $sorguDizesi['deger'], 'both');
+				$veriSorgu->like('sehir', $sorguDizesi['deger'], 'both');
+			} elseif($sorguDizesi['nerede'] == 'marka') {
+				$veriSorgu->like('marka_adi', $sorguDizesi['deger'], 'both');
 			} else {
-				$veriSorgu->like($sorguDizesi['nerede'], $sorguDizesi['deger'], 'both');
-			}		}
+				$veriSorgu->like($sorguDizesi['nerede'], $sorguDizesi['deger']);
+			}
+		}
 		$cevap = array(
 			'fisler'			=> $fisler,
 			'satirSayisi'	=> $q->get()->result()[0]->satirSayisi
@@ -122,6 +128,15 @@ class Servis_model extends CI_Model {
 		return $sorgu->result();
 	}
 
+	function cihazMarkalari($markaNo=false) {
+		if($markaNo==false) {
+			$sorgu = $this->mySunucu->query('SELECT marka_no, marka_adi, marka_resim FROM markalar ORDER BY marka_no ASC');
+		} else {
+			$sorgu = $this->mySunucu->query('SELECT marka_no, marka_adi, marka_resim FROM markalar WHERE marka_no='.$markaNo.' ORDER BY marka_no ASC');
+		}
+		return $sorgu->result();
+	}
+
 	function iller() {
 		$sorgu = $this->mySunucu->query('SELECT * FROM iller ORDER BY il_adi ASC');
 		return $sorgu->result();
@@ -152,13 +167,9 @@ class Servis_model extends CI_Model {
 	}
 
 	function servisFisiGuncelle($veri, $fisNo) {
-		try {
-			$this->mySunucu->WHERE('fis_no', $fisNo);
-			$this->mySunucu->UPDATE('servis_fis', $veri);
-			return true;
-		} catch(Exception $hata) {
-			return $hata->getMessage();
-		}
+		$this->mySunucu->WHERE('fis_no', $fisNo);
+		$this->mySunucu->UPDATE('servis_fis', $veri);
+		return true;
 	}
 
 	function servisFisiGetir($fisNo) {
@@ -174,7 +185,6 @@ class Servis_model extends CI_Model {
 			'nerede'	=> $this->input->get('nerede'),
 			'deger'	=> $this->input->get('deger')
 		);
-		$siralamaYonu		= $siralamaYonu=="desc" ? 'desc' : 'asc';
 		$veriSorgu	= $this->mySunucu->select('*')->from('excel_sorgu');
 		if(strlen($sorguDizesi['nerede'])) {
 			if($sorguDizesi['nerede'] == 'sehir') {
@@ -183,6 +193,7 @@ class Servis_model extends CI_Model {
 				$veriSorgu->like($sorguDizesi['nerede'], $sorguDizesi['deger']);
 			}
 		}
+		$veriSorgu->order_by('is_numarasi', 'desc');
 		return $veriSorgu->get()->result();
 	}
 
@@ -207,7 +218,6 @@ class Servis_model extends CI_Model {
 	}
 
 }
-
 
 /* servis_model.php Dosyasının Sonu */
 /*  Hazırlayan Güner ARIK  */

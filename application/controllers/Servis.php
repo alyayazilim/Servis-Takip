@@ -150,7 +150,8 @@ class Servis extends CI_Controller {
 	}
 
 	function excel_yaz() {
-		error_reporting(1);
+		$this->load->model("servis_model");
+		$sorgu = $this->servis_model->excelIcinVeriHazirla($this->uri->segment(3));
 		$this->load->library('Excel');
 		$tablo = $this->excel->getActiveSheet();
 		// BAŞLIKLAR HAZIRLANIYOR
@@ -180,15 +181,43 @@ class Servis extends CI_Controller {
 						->setCellValue('W1', 'GÖNDERİ DÖKÜMANI')
 						->setCellValue('X1', 'GÖNDERİ ÜCRETİ')
 						->setCellValue('Y1', 'SERVİS ÜCRETİ')
-						->setCellValue('Z1', 'PARÇA');
+						->setCellValue('Z1', 'PARÇA KODU 1')
+						->setCellValue('AA1', 'PARÇA ADI 1')
+						->setCellValue('AB1', 'PARÇA KODU 2')
+						->setCellValue('AC1', 'PARÇA ADI 2')
+						->setCellValue('AD1', 'PARÇA KODU 3')
+						->setCellValue('AE1', 'PARÇA ADI 3')
+						->setCellValue('AF1', 'PARÇA KODU 4')
+						->setCellValue('AG1', 'PARÇA ADI 4')
+						->setCellValue('AH1', 'PARÇA KODU 5')
+						->setCellValue('AI1', 'PARÇA ADI 5')
+						->setCellValue('AJ1', 'PARÇA KODU 6')
+						->setCellValue('AK1', 'PARÇA ADI 6')
+						->setCellValue('AL1', 'PARÇA KODU 7')
+						->setCellValue('AM1', 'PARÇA ADI 7')
+						->setCellValue('AN1', 'PARÇA KODU 8')
+						->setCellValue('AO1', 'PARÇA ADI 8')
+						->setCellValue('AP1', 'PARÇA KODU 9')
+						->setCellValue('AQ1', 'PARÇA ADI 9')
+						->setCellValue('AR1', 'PARÇA KODU 10')
+						->setCellValue('AS1', 'PARÇA ADI 10')
+						->setCellValue('AT1', 'PARÇA KODU 11')
+						->setCellValue('AU1', 'PARÇA ADI 11')
+						->setCellValue('AV1', 'PARÇA KODU 12')
+						->setCellValue('AW1', 'PARÇA ADI 12');
 		$tablo->getRowDimension(8)->setRowHeight(-1);
 		// Kullandığımız Kolonları Otomatik Olarak Genişletiyoruz. Ortaya Hizalıyoruz ve Yazı Formatlarını Ayarlıyoruz.
-		$this->load->model("servis_model");
-		$sorgu = $this->servis_model->excelIcinVeriHazirla($this->uri->segment(3));
 		$i=2;
-		foreach($sorgu AS $sonuc) {
-			$sonuc->gonderi_ucreti > "0.00" ? $gonderiUcreti = $sonuc->gonderi_ucreti : $gonderiUcreti ='';
-			$sonuc->servis_ucreti > "0.00" ? $servis_ucreti = $sonuc->servis_ucreti : $servis_ucreti ='';
+		foreach($sorgu AS $sonuc) :
+			$pDize = array();
+			if($sonuc->parcalar) {
+				$parca = explode('|', $sonuc->parcalar);
+				foreach($parca AS $p) :
+					$yaz = explode('@*@', $p);
+					array_push($pDize, $yaz);
+				endforeach; // parca
+				var_dump($pDize);
+			}
 			$tablo->setCellValue('A'.$i, $sonuc->is_numarasi)
 					->setCellValue('B'.$i, $sonuc->gelis_tarihi)
 					->setCellValue('C'.$i, $sonuc->musteri_adi)
@@ -212,12 +241,36 @@ class Servis extends CI_Controller {
 					->setCellValue('U'.$i, $sonuc->servis_sekli)
 					->setCellValue('V'.$i, $sonuc->gonderi_sekli)
 					->setCellValue('W'.$i, $sonuc->gonderi_dokuman)
-					->setCellValue('X'.$i, $gonderiUcreti)
-					->setCellValue('Y'.$i, $servis_ucreti)
-					->setCellValue('Z'.$i, "");
+					->setCellValue('X'.$i, '')
+					->setCellValue('Y'.$i, '')
+					->setCellValue('Z'.$i, @$pDize[0][0])
+					->setCellValue('AA'.$i, @$pDize[0][1])
+					->setCellValue('AB'.$i, @$pDize[1][0])
+					->setCellValue('AC'.$i, @$pDize[1][1])
+					->setCellValue('AD'.$i, @$pDize[2][0])
+					->setCellValue('AE'.$i, @$pDize[2][1])
+					->setCellValue('AF'.$i, @$pDize[3][0])
+					->setCellValue('AG'.$i, @$pDize[3][1])
+					->setCellValue('AH'.$i, @$pDize[4][0])
+					->setCellValue('AI'.$i, @$pDize[4][1])
+					->setCellValue('AJ'.$i, @$pDize[5][0])
+					->setCellValue('AK'.$i, @$pDize[5][1])
+					->setCellValue('AL'.$i, @$pDize[6][0])
+					->setCellValue('AM'.$i, @$pDize[6][1])
+					->setCellValue('AN'.$i, @$pDize[7][0])
+					->setCellValue('AO'.$i, @$pDize[7][1])
+					->setCellValue('AP'.$i, @$pDize[8][0])
+					->setCellValue('AQ'.$i, @$pDize[8][1])
+					->setCellValue('AR'.$i, @$pDize[9][0])
+					->setCellValue('AS'.$i, @$pDize[9][1])
+					->setCellValue('AT'.$i, @$pDize[10][0])
+					->setCellValue('AU'.$i, @$pDize[10][1])
+					->setCellValue('AV'.$i, @$pDize[11][0])
+					->setCellValue('AW'.$i, @$pDize[11][1]);
 			$tablo->getRowDimension(8)->setRowHeight(-1);
 			$i++;
-		}
+		endforeach; // sorgu
+		//die();
 		$borderStili = array(
 			'borders' => array(
 				'allborders' => array(
@@ -225,7 +278,7 @@ class Servis extends CI_Controller {
 				)
 			)
 		);
-		$tablo->getStyle('A1:Z'.$i)->applyFromArray($borderStili);
+		$tablo->getStyle('A1:AW'.$i)->applyFromArray($borderStili);
 		unset($borderStili);
 		$yaziFormat = array(
 			'font'  => array(
@@ -234,11 +287,11 @@ class Servis extends CI_Controller {
 				'name'  => 'Arial'
 			)
 		);
-		$tablo->getStyle('A2:Z'.$i)->applyFromArray($yaziFormat);
+		$tablo->getStyle('A2:AW'.$i)->applyFromArray($yaziFormat);
 		$tlFormat = '#.###,00 \₺';
 		$tablo->getStyle('X2:Y'.$i)->getNumberFormat()->setFormatCode($tlFormat);
 		$tablo->getStyle('W2:W'.$i)->getNumberFormat()->setFormatCode('0');
-		for($kolon='A'; $kolon!=='AA'; $kolon++) {
+		for($kolon='A'; $kolon!=='AX'; $kolon++) {
 			$tablo->getColumnDimension($kolon)->setAutoSize(true);
 			$tablo->getStyle($kolon.'1')->getAlignment()->setWrapText(false);
 			$tablo->getStyle($kolon.'1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -261,11 +314,6 @@ class Servis extends CI_Controller {
 			);
 		}
 		$tablo->freezePane("B2");
-		$j = $i+1;
-		$tablo->setCellValue('X'.$j, '=SUM(X2:X'.$i.')');
-		$tablo->setCellValue('Y'.$j, '=SUM(Y2:Y'.$i.')');
-		$tablo->getStyle('X'.$j)->getNumberFormat()->setFormatCode($tlFormat);
-		$tablo->getStyle('Y'.$j)->getNumberFormat()->setFormatCode($tlFormat);
 		$tablo->setTitle('Kadir Tutak Servis Dökümü');
 		$this->excel->getProperties()->setCreator("Kadir TUTAK")
 					->setLastModifiedBy("Kadir TUTAK")
@@ -277,10 +325,9 @@ class Servis extends CI_Controller {
 		$this->excel->setActiveSheetIndex(0);
 		$yeniDosyaAdi = $this->servis_model->dosyaAdiOlustur(TRUE, FALSE);
 		$objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'Excel2007');
-		$objWriter->save(str_replace('.php', '.xlsx', 'dosyalar/download/'.$yeniDosyaAdi.'.xlsx'));
+		ob_end_clean();
 		header('Content-Type: application/vnd.ms-excel');
-		header('Content-Disposition: attachment;filename="'.$yeniDosyaAdi.'.xlsx"');
-		header('Cache-Control: max-age=0');
+		header('Content-Disposition: attachment; filename="'.$yeniDosyaAdi.'.xlsx"');
 		$objWriter->save('php://output');
 		unlink('dosyalar/download/'.$yeniDosyaAdi.'.xlsx');
 	}
@@ -334,21 +381,21 @@ class Servis extends CI_Controller {
 					'tel'						=> $kolonVeri[5],
 					'email'					=> $kolonVeri[6],
 					'durum'					=> 1,
-					'marka'					=> 10,
+					'marka'					=> 2,
 					'cihaz_tur'				=> 11,
 					'urun_kodu'				=> strtoupper($kolonVeri[7]),
-					'urun_adi' 				=> strtoupper($kolonVeri[9]),
-					'seri_no' 				=> strtoupper($kolonVeri[10]),
-					'garanti_baslangic' 	=> $this->servis_model->tarih2unix(PHPExcel_Style_NumberFormat::toFormattedString($kolonVeri[11], 'YYYY-MM-DD hh:mm:ss')),
-					'garanti_belge_turu'	=> $kolonVeri[12],
-					'bildirilen_ariza' 	=> $kolonVeri[13],
-					'ariza_tanimi'			=> $kolonVeri[14],
-					'yapilan_islem'		=> $kolonVeri[15],
-					'sayac_durumu'			=> $kolonVeri[16],
-					'teslim_tarihi'		=> $this->servis_model->tarih2unix(PHPExcel_Style_NumberFormat::toFormattedString($kolonVeri[17], 'YYYY-MM-DD hh:mm:ss')),
-					'servis_sekli'			=> $kolonVeri[18],
-					'gonderi_sekli'		=> $kolonVeri[19],
-					'gonderi_dokuman'		=> $kolonVeri[20],
+					'urun_adi' 				=> strtoupper($kolonVeri[8]),
+					'seri_no' 				=> strtoupper($kolonVeri[9]),
+					'garanti_baslangic' 	=> $this->servis_model->tarih2unix(PHPExcel_Style_NumberFormat::toFormattedString($kolonVeri[10], 'YYYY-MM-DD hh:mm:ss')),
+					'garanti_belge_turu'	=> $kolonVeri[11],
+					'bildirilen_ariza' 	=> $kolonVeri[12],
+					'ariza_tanimi'			=> $kolonVeri[13],
+					'yapilan_islem'		=> $kolonVeri[14],
+					'sayac_durumu'			=> $kolonVeri[15],
+					'teslim_tarihi'		=> $this->servis_model->tarih2unix(PHPExcel_Style_NumberFormat::toFormattedString($kolonVeri[16], 'YYYY-MM-DD hh:mm:ss')),
+					'servis_sekli'			=> $kolonVeri[17],
+					'gonderi_sekli'		=> $kolonVeri[18],
+					'gonderi_dokuman'		=> $kolonVeri[19],
 					'gonderi_ucreti'		=> 0,
 					'servis_ucreti'		=> 0,
 					'pesinat'				=> '0.00',

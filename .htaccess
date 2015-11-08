@@ -3,6 +3,6 @@ RewriteCond %{HTTP_HOST} !^www.ci3.net$ [NC]
 RewriteRule ^(.*)$ http://www.ci3.net/$1 [R,L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond $1 !^(index\.php|css|fonts|java|resimler|test.php)
+RewriteCond $1 !^(index\.php|css|fonts|javascript|resimler|test.php)
 #RewriteRule ^(.*)$ index.php?/$1 [L]
 RewriteRule ^(.*)$ index.php/$1 [PT,L]

@@ -7,7 +7,7 @@ if(!defined('BASEPATH')) exit('Bu Sayfaya Direk Erişim Sağlayamazsınız');
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>پیگیری خدمات'.@$firmaAdi.' - Servis Takip</title>
+		<title>'.$firma_adi.' - Servis Takip</title>
 		<link rel="stylesheet" href="'.base_url().'css/bootstrap.min.css">
 		<link rel="stylesheet" href="'.base_url().'css/jquery-ui.min.css">
 		<link rel="stylesheet" href="'.base_url().'css/bootstrap-theme.min.css">
@@ -75,15 +75,9 @@ if(!defined('BASEPATH')) exit('Bu Sayfaya Direk Erişim Sağlayamazsınız');
 				<li><a';
 				echo $this->uri->segment(2)=='markalar' ?  ' class="secili"' : '';
 				echo ' href="'.base_url().'sistem_yonetimi/markalar">Markalar</a></li>
-				<li><a';
-				echo $this->uri->segment(2)=='gorsel_ayar' ?  ' class="secili"' : '';
-				echo ' href="'.base_url().'sistem_yonetimi/gorsel_ayar">Görsel Ayarlar</a></li>
-				<li><a';
-				echo $this->uri->segment(2)=='kullanici_ayar' ?  ' class="secili"' : '';
-				echo ' href="'.base_url().'sistem_yonetimi/kullanici_ayar">Kullanıcı Ayarları</a></li>
-				<li><a';
-				echo $this->uri->segment(2)=='yonetici_ayar' ?  ' class="secili"' : '';
-				echo ' href="'.base_url().'sistem_yonetimi/yonetici_ayar">Yönetici Ayarları</a></li>
+				<!-- <li><a';
+				echo $this->uri->segment(2)=='site_ayar' ?  ' class="secili"' : '';
+				echo ' href="'.base_url().'sistem_yonetimi/site_ayar">Site Ayarları</a></li> -->
 			</ul>';
 		}
 	}

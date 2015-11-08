@@ -61,7 +61,7 @@ if (!defined('PCLZIP_ERROR_EXTERNAL')) {
 //             - MUST be a valid, already created directory
 //             Samples :
 // define('PCLZIP_TEMPORARY_DIR', '/temp/');
-// define('PCLZIP_TEMPORARY_DIR', 'C:/Temp/');
+// define('PCLZIP_TEMPORARY_DIR', 'D:/Temp/');
 if (!defined('PCLZIP_TEMPORARY_DIR')) {
     define('PCLZIP_TEMPORARY_DIR', '');
 }

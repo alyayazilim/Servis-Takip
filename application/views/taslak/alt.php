@@ -2,10 +2,10 @@
 if(!defined('BASEPATH')) exit('Bu Sayfaya Direk Erişim Sağlayamazsınız');
 
 	echo '<div class="navbar navbar-inverse navbar-fixed-bottom" role="navigation">
-			<div id="yazilacak" class="container">';
+				<div id="yazilacak" class="container">
+					<div id="frmBilgi">'.$frmCopyright.'</div>';
 					echo @$sayfalama;
-echo '	</div>
-			
+	echo '	</div>
 		</div>
 	</body>
 </html>

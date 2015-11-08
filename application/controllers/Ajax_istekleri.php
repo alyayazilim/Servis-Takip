@@ -45,9 +45,11 @@ class Ajax_istekleri extends CI_Controller {
 			'gonderi_ucreti' 		=> $this->input->post('gonderiUcret', TRUE),
 			'servis_ucreti' 		=> $this->input->post('gonderiUcret', TRUE),
 			'servis_ucreti'		=> $this->input->post('servisUcret', TRUE),
-			'pesinat'				=> $this->input->post('pesinat', TRUE)
+			'pesinat'				=> $this->input->post('pesinat', TRUE),
+			'parcalar'				=> $this->input->post('parcalar', TRUE)
 		);
 		$cevap = $this->servis_model->servisFisiKaydet($kayitVerileri, 'kayit', $kayitNo=FALSE);
+		
 		echo $cevap;
 	}
 
@@ -95,7 +97,8 @@ class Ajax_istekleri extends CI_Controller {
 			'gonderi_dokuman'		=> $this->input->post('gonderiDokuman', TRUE),
 			'gonderi_ucreti'		=> $this->input->post('gonderiUcret', TRUE),
 			'servis_ucreti'		=> $this->input->post('servisUcret', TRUE),
-			'pesinat'				=> $this->input->post('pesinat', TRUE)
+			'pesinat'				=> $this->input->post('pesinat', TRUE),
+			'parcalar'				=> $this->input->post('parcalar', TRUE)
 		);
 		$sonuc = $this->servis_model->servisFisiGuncelle($kayitVerileri, $this->uri->segment(3));
 		echo $sonuc;
@@ -222,6 +225,25 @@ class Ajax_istekleri extends CI_Controller {
 			$obje .= @$formHatasi;
 		}
 		echo $obje;
+	}
+
+	function seri_no_kontrol() {
+		//kullanici_seri_no_bilgi($seriNo, $fisNo)
+		$this->load->model('kullanici_model');
+		$veri = $this->kullanici_model->kullanici_seri_no_bilgi($this->input->post('seri_no', TRUE), false);
+		if(count($veri)!=0) {
+			$bilgi = "";
+			foreach($veri AS $musteri) :
+				$bilgi .= '<a class="ajaxMusteriListesi" href="javascript:;" onclick="cihazBilgiYaz('.$musteri->fis_no.');">'.$musteri->seri_no.' - '.$musteri->musteri_adi.' - '.$musteri->il.'</a>';
+			endforeach;
+			echo $bilgi;
+		}	}
+
+	function seri_no_kontrolYaz() {
+		//kullanici_seri_no_bilgi($seriNo, $fisNo)
+		$this->load->model('kullanici_model');
+		$veri = $this->kullanici_model->kullanici_seri_no_bilgi(false, $this->input->post('fis_no', TRUE));
+		echo json_encode($veri, JSON_UNESCAPED_UNICODE);
 	}
 
 }

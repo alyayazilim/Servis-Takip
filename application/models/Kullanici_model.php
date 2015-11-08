@@ -21,7 +21,7 @@ class Kullanici_model extends CI_Model {
 	}
 
 	function kullanici_giris($kAdi) {
-		$sorgu = $this->mySunucu->QUERY('SELECT k_no, k_adi, yetki, eposta, FROM_UNIXTIME(son_giris, \'%d.%m.%Y - %h:%i\') AS son_giris
+		$sorgu = $this->mySunucu->QUERY('SELECT k_no, k_adi, yetki, eposta, FROM_UNIXTIME(son_giris, \'%d.%m.%Y - %H:%i\') AS son_giris
 		FROM kullanicilar
 		WHERE k_adi = "'.$kAdi.'"');
 		foreach($sorgu->result() AS $sonuc) {
@@ -129,6 +129,29 @@ class Kullanici_model extends CI_Model {
 	function kullanici_bilgi_json($fNo) {
 		$sorgu = $this->mySunucu->query('SELECT musteri_adi, musteri_adresi, sehir, tel, email FROM servis_fis WHERE fis_no='.$fNo);
 		return $sorgu->result();
+	}
+
+	function kullanici_seri_no_bilgi($seriNo, $fisNo) {
+		$sorgu = 'SELECT SF.fis_no, SF.musteri_adi, SF.musteri_adresi, SF.posta_kodu, SF.sehir, IL.il_adi AS il, SF.tel, SF.email, SF.marka, SF.cihaz_tur, SF.urun_kodu, SF.urun_adi, date_format(from_unixtime(SF.garanti_baslangic),"%d.%m.%Y") AS garanti_baslangic, SF.garanti_belge_turu, SF.seri_no,SF.sayac_durumu
+		FROM servis_fis AS SF
+			LEFT JOIN iller AS IL ON SF.sehir = IL.il_no';
+		if($seriNo != false) {
+			$sorgu .= ' WHERE SF.seri_no LIKE "%'.$seriNo.'%"';
+		} elseif($fisNo != false) {
+			$sorgu .= ' WHERE SF.fis_no='.$fisNo;
+		}
+		$sorgu .= ' GROUP BY SF.musteri_adi';
+		$sonuc = $this->mySunucu->QUERY($sorgu);
+		return $sonuc->result();
+	}
+
+	function sifre_degistir($kullaniciAdi, $sifre) {
+		$kayitBilgi = array(
+			'sifre'	=> md5($sifre)
+		);
+		$this->mySunucu->WHERE('k_adi', $kullaniciAdi);
+		$this->mySunucu->UPDATE('kullanicilar', $kayitBilgi);
+		return true;
 	}
 
 }

@@ -7,7 +7,7 @@
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>'.@$firmaAdi.' - Servis Takip</title>
+		<title>'.$firma_adi.' - Servis Takip</title>
 		<script type="text/javascript" src="'.base_url().'javascript/jquery-1.11.2.min.js"></script>
 		<!-- <script src="'.base_url().'javascript/TweenLite.min.js"></script> -->
 		<link rel="stylesheet" href="'.base_url().'css/bootstrap.min.css">
@@ -61,6 +61,7 @@
 	</div>';
 }
 	echo '<div class="navbar navbar-inverse navbar-fixed-bottom" role="navigation">
+			<div id="frmBilgi">'.$frmCopyright.'</div>
 			<div class="container">'.@$sayfalama.'</div>
 			
 		</div>

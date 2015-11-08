@@ -86,6 +86,28 @@ function servisFisiEkle(fisNo,isNo) {
 				document.getElementById("gonderiDokuman").value=veri.gonderi_dokuman;
 				document.getElementById("gonderiUcret").value=veri.gonderi_ucreti;
 				document.getElementById("islemler").value=veri.yapilan_islem;
+				var degisecekDiv = document.getElementById('Degisecek');
+				var parcalar = veri.parcalar;
+				var yaz				= '';
+				if(parcalar) {
+					var parcaGrup = parcalar.split("|");
+					var grupSayi = parcaGrup.length;
+					if(grupSayi > 0) {
+						document.getElementById("Degisecek").style.display="block";
+						for(var i = 0; i < grupSayi; i++) {
+							var parcaDok = parcaGrup[i].split("@*@");
+							var yazilacak		= '';
+							var yeniIsim		= i;
+							var yeniAlan		= document.createElement('div');
+							yazilacak			+= '<input type="text" name="parca_kodu[]" value="'+parcaDok[0]+'" style="clear: both;" placeholder="Parça Kodu" />'
+													+  '<input type="text" name="parca_adi[]" value="'+parcaDok[1]+'" placeholder="Parça Adı"/>'
+													+  '<a class="alanSil" href="javascript:;" onclick="ozellikAlanSil('+yeniIsim+');"><img src="'+domain+'/resimler/sil_aktif.png" title="Özellik Sil" alt="Özellik Sil" /></a>';
+							yeniAlan.innerHTML = yazilacak;
+							yeniAlan.setAttribute('id', 'degisecek_'+yeniIsim);
+							degisecekDiv.appendChild(yeniAlan);
+						}
+					}
+				}
 			}
 		}
 	} else {
@@ -99,7 +121,6 @@ function servisFisiEkle(fisNo,isNo) {
 				document.getElementById('ekleNo').innerHTML=istek.responseText;
 			}
 		}
-		document.getElementById('ekleBaslik').innerHTML="Yeni Kayıt Ekle";
 	}
 }
 
@@ -208,11 +229,21 @@ function yeniKayitFormKontrol() {
 	var tServisUcret			= servisUcret.value.trim();
 	var pesinat					= document.getElementById("pesinat");
 	var tPesinat				= pesinat.value.trim();
+	var parcaKodu				= document.getElementsByName('parca_kodu[]');
+	var parcaAdi				= document.getElementsByName('parca_adi[]');
+	var parcaSay				= parcaKodu.length;
+	var parcaDize				= [];
+	for(var i=0; i<parcaSay; i++) {
+		var deneme = parcaKodu[i].value+"@*@"+parcaAdi[i].value;
+		var parcaVeri = { deneme };
+		parcaDize.push(deneme);
+	}
+	var parca = parcaDize.join('|');
+	document.getElementById('ekleBaslik').innerHTML="Yeni Kayıt Ekle";
 	if(tMus.length < 5) {
 		mesajDivi.innerHTML="Müsteri Adı En az 5 Karakter Olmalıdır !!!";
 		mus.style.border="1px solid #F00";
 		mus.focus();
-		return false;
 	}
 	if(tTel.length < 11) {
 		mesajDivi.innerHTML="Telefon En az 11 Karakter Olmalıdır !!!";
@@ -249,7 +280,8 @@ function yeniKayitFormKontrol() {
 		+"&gonderiDokuman="+tGonderiDokuman
 		+"&gonderiUcret="+tGonderiUcret
 		+"&servisUcret="+tServisUcret
-		+"&pesinat="+tPesinat;
+		+"&pesinat="+tPesinat
+		+"&parcalar="+parca;
 	var istek =  nesneOlustur();
 	var islemDosyasi = domain+"/ajax_istekleri/yeni_fis_kayit";
 	istek.open('POST', islemDosyasi, true);
@@ -265,6 +297,7 @@ function yeniKayitFormKontrol() {
 				alert('Ajax İstekleri Dosyasında Hata : '+istek.responseText);
 			}
 		}
+		document.getElementById('Degisecek').innerHTML=istek.responseText;
 	}
 }
 
@@ -433,6 +466,16 @@ function kayitDuzenleFormKontrol(fisNo) {
 	var tServisUcret			= servisUcret.value.trim();
 	var pesinat					= document.getElementById("pesinat");
 	var tPesinat				= pesinat.value.trim();
+	var parcaKodu				= document.getElementsByName('parca_kodu[]');
+	var parcaAdi				= document.getElementsByName('parca_adi[]');
+	var parcaSay				= parcaKodu.length;
+	var parcaDize				= [];
+	for(var i=0; i<parcaSay; i++) {
+		var deneme = parcaKodu[i].value+"@*@"+parcaAdi[i].value;
+		var parcaVeri = { deneme };
+		parcaDize.push(deneme);
+	}
+	var parca = parcaDize.join('|');
 	if(tMus.length < 5) {
 		mesajDivi.innerHTML="Müsteri Adı En az 5 Karakter Olmalıdır !!!";
 		mus.style.border="1px solid #F00";
@@ -474,7 +517,9 @@ function kayitDuzenleFormKontrol(fisNo) {
 		+"&gonderiDokuman="+tGonderiDokuman
 		+"&gonderiUcret="+tGonderiUcret
 		+"&servisUcret="+tServisUcret
-		+"&pesinat="+tPesinat;		
+		+"&pesinat="+tPesinat
+		+"&pesinat="+tPesinat
+		+"&parcalar="+parca;
 	var istek =  nesneOlustur();
 	var islemDosyasi = domain+"/ajax_istekleri/fis_duzenle/"+fisNo;
 	istek.open('POST', islemDosyasi, true);
@@ -513,6 +558,8 @@ function formTemizle(divAdi) {
 				this.checked = false;
 	 }
   });
+  	document.getElementById('Degisecek').innerHTML="";
+  	document.getElementById('Degisecek').style.display="none";
 	document.getElementById('kayit_buton').setAttribute('onclick','yeniKayitFormKontrol();');
 	document.getElementById('gFisNo').value='';
 }
@@ -668,6 +715,34 @@ function cihaz_tur_duzenle_kontrol() {
 	}
 }
 
+function cihaz_marka_kaydet_kontrol() {
+	var marka_adi		= document.getElementById("marka_adi");
+	var tMarka_adi		= marka_adi.value.trim();
+	var dosyaAdresi	= document.getElementById("marka_resim").value;
+	if(tMarka_adi.length < 2) {
+		alert("Marka En az 2 Karakter Olmalıdır !!!");
+		marka_adi.style.border="1px solid #F00";
+		marka_adi.focus();
+		return false;
+	}
+	if(dosyaAdresi=="") {
+		alert('Resim Seçmelisiniz');
+		return false;
+	}
+}
+
+function cihaz_marka_duzenle_kontrol() {
+	var marka_adi	= document.getElementById("marka_adi");
+	var tMarka_adi	= marka_adi.value.trim();
+	var dosyaAdresi	= document.getElementById("marka_resim").value;
+	if(tMarka_adi.length < 2) {
+		alert("Marka En az 2 Karakter Olmalıdır !!!");
+		marka_adi.style.border="1px solid #F00";
+		marka_adi.focus();
+		return false;
+	}
+}
+
 function yeniMarkaEkle(nesne) {
 	var sahneDivi		= document.getElementById('turDokum');
 	postVerisi			= "islem=ekle";
@@ -696,4 +771,74 @@ function cihazMarkaGetir(markaNo) {
 			sahneDivi.innerHTML=istek.responseText;			
 		}
 	}
+}
+
+function seriNoKontrol() {
+	var seriNo 		= document.getElementById("seriNo");
+	var tSeriNo		= seriNo.value.trim();
+	postVerisi			= "seri_no="+tSeriNo;
+	var istek			= nesneOlustur();
+	var islemDosyasi	= domain+"/ajax_istekleri/seri_no_kontrol";
+	istek.open('POST', islemDosyasi, true);
+	istek.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+	istek.send(postVerisi);
+	istek.onreadystatechange = function() {
+		if(istek.readyState == 4) {
+			if(istek.responseText != 0) {
+				document.getElementById("serinolar").style.display="block";
+				document.getElementById("serinolar").innerHTML=istek.responseText;
+			} else {
+				document.getElementById("serinolar").style.display="none";
+				document.getElementById("serinolar").innerHTML="";	
+			}
+		}
+	}
+}
+
+function cihazBilgiYaz(fisNo) {
+	postVerisi			= "fis_no="+fisNo;
+	var istek			= nesneOlustur();
+	var islemDosyasi	= domain+"/ajax_istekleri/seri_no_kontrolYaz";
+	istek.open('POST', islemDosyasi, true);
+	istek.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+	istek.send(postVerisi);
+	istek.onreadystatechange = function() {
+		if(istek.readyState == 4) {
+			var veri = JSON.parse(istek.responseText);
+			document.getElementById("serinolar").style.display="none";
+			document.getElementById("serinolar").innerHTML="";
+			document.getElementById('musteri').value=veri[0].musteri_adi;
+			document.getElementById('tel').value=veri[0].tel;
+			document.getElementById('email').value=veri[0].email;
+			document.getElementById('sehir').value=veri[0].sehir;
+			document.getElementById('adres').innerHTML=veri[0].musteri_adresi;
+			document.getElementById('marka').value=veri[0].marka;
+			document.getElementById('cihaz').value=veri[0].cihaz_tur;
+			document.getElementById('urunKodu').value=veri[0].urun_kodu;
+			document.getElementById('urunAdi').value=veri[0].urun_adi;
+			document.getElementById('seriNo').value=veri[0].seri_no;
+			document.getElementById('belgeTuru').value=veri[0].garanti_belge_turu;
+			document.getElementById('garantiBaslangic').value=veri[0].garanti_baslangic;
+			document.getElementById('sayac').value=veri[0].sayac_durumu;
+		}
+	}
+}
+
+function parcaEkle() {
+	var yeniIsim		= Date.now();
+	var degisecekDiv	= document.getElementById("Degisecek");
+	degisecekDiv.style.display="block";
+	var yeniAlan		= document.createElement('div');
+	var yazilacak		= '';
+	yazilacak			+= '<input type="text" name="parca_kodu[]" style="clear: both;" placeholder="Parça Kodu" />'
+							+  '<input type="text" name="parca_adi[]" placeholder="Parça Adı"/>'
+								+  '<a class="alanSil" href="javascript:;" onclick="ozellikAlanSil('+yeniIsim+');"><img src="'+domain+'/resimler/sil_aktif.png" title="Özellik Sil" alt="Özellik Sil" /></a>';
+	yeniAlan.innerHTML = yazilacak;
+	yeniAlan.setAttribute('id', 'degisecek_'+yeniIsim);
+	degisecekDiv.appendChild(yeniAlan);
+}
+
+function ozellikAlanSil(divId) {
+	var silinecekDiv = document.getElementById('degisecek_'+divId);
+	silinecekDiv.parentNode.removeChild(silinecekDiv);
 }

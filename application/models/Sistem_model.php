@@ -12,13 +12,11 @@ class Sistem_model extends CI_Model {
 		$firmaBilgi = $this->mySunucu->query('SELECT ayar_degerler FROM sistem_ayar WHERE ayar_no=1');
 		foreach($firmaBilgi->result() AS $fBilgi) :
 			$fBilgiArray = unserialize($fBilgi->ayar_degerler);
-			/*$fBilgiArr = array(
-				'firma_adi'		=> $fBilgiArray->firma_adi,
-				'mail'			=> $fBilgiArray->mail,
-				'il'				=> $fBilgiArray->il,
-				'firma_logo'	=> $fBilgiArray->firma_logo
-			);*/
 		endforeach;
+		$ekle = array(
+			'frmCopyright'	=> '<a href="mailto:'.$fBilgiArray['mail'].'?Subject='.base_url().' Adresinden size Ulaşıyorum" target="_top">copyright © '.$fBilgiArray['firma_adi'].' 2015</a><br />Tüm Hakkı Saklıdır.'
+		);
+		$fBilgiArray = array_merge($fBilgiArray, $ekle);
 		return $fBilgiArray;
 	}
 
@@ -52,12 +50,14 @@ class Sistem_model extends CI_Model {
 		return $resim;
 	}
 
-	function cihazMarkaResmiGetir($markaNo) {
-		$sorgu = $this->mySunucu->query('SELECT marka_resim FROM markalar WHERE marka_no='.$markaNo);
-		foreach($sorgu->result() AS $bilgi) :
-			$resim = $bilgi->marka_resim;
-		endforeach;
-		return $resim;
+	function cihaz_tur_mukerrermi($cihaz_turu) {
+		$sorgu = $this->mySunucu->query('SELECT tur_adi FROM cihaz_tur WHERE tur_adi = "'.$cihaz_turu.'"');
+		return $sorgu->num_rows();
+	}
+
+	function cihazTurKaydet($kayitVerileri) {
+		$this->mySunucu->INSERT('cihaz_tur', $kayitVerileri);
+		return true;
 	}
 
 	function cihaz_tur_sil($turNo) {
@@ -66,25 +66,34 @@ class Sistem_model extends CI_Model {
 		return true;
 	}
 
+	function markaBilgileriGetir($markaNo) {
+		$sorgu = $this->mySunucu->query('SELECT marka_adi, marka_resim FROM markalar WHERE marka_no='.$markaNo);
+		return $sorgu->result();
+	}
+
+	function cihazMarkaResmiGetir($markaNo) {
+		$sorgu = $this->mySunucu->query('SELECT marka_resim FROM markalar WHERE marka_no='.$markaNo);
+		foreach($sorgu->result() AS $bilgi) :
+			$resim = $bilgi->marka_resim;
+		endforeach;
+		return $resim;
+	}
+
+	function cihazMarkaKaydet($kayitVerileri) {
+		$this->mySunucu->INSERT('markalar', $kayitVerileri);
+		return true;
+	}
+
+	function cihazMarkaGuncelle($markaNo, $kayitVerileri) {
+		$this->mySunucu->WHERE('marka_no', $markaNo);
+		$this->mySunucu->UPDATE('markalar', $kayitVerileri);
+		return true;
+	}
+
 	function cihaz_marka_sil($markaNo) {
 		$this->mySunucu->WHERE('marka_no', $markaNo);
 		$this->mySunucu->DELETE('markalar');
 		return true;
-	}
-
-	function cihazTurKaydet($kayitVerileri) {
-		$this->mySunucu->INSERT('cihaz_tur', $kayitVerileri);
-		return true;
-	}
-
-	function cihaz_tur_mukerrermi($cihaz_turu) {
-		$sorgu = $this->mySunucu->query('SELECT tur_adi FROM cihaz_tur WHERE tur_adi = "'.$cihaz_turu.'"');
-		return $sorgu->num_rows();
-	}
-
-	function markaBilgileriGetir($markaNo) {
-		$sorgu = $this->mySunucu->query('SELECT marka_adi, marka_resim FROM markalar WHERE marka_no='.$markaNo);
-		return $sorgu->result();
 	}
 
 }

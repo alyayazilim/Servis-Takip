@@ -218,7 +218,7 @@ class PHPExcel_Shared_Font
      * Set the path to the folder containing .ttf files. There should be a trailing slash.
      * Typical locations on variout some platforms:
      *    <ul>
-     *        <li>C:/Windows/Fonts/</li>
+     *        <li>D:/Windows/Fonts/</li>
      *        <li>/usr/share/fonts/truetype/</li>
      *        <li>~/.fonts/</li>
      *    </ul>

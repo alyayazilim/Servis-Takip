@@ -11,6 +11,9 @@
 	echo extension_loaded('xmlwriter') ? null : die('sisteminizde xmlWriter Extensionu Yüklü Değil. Lütfen sistem yöneticinizle temasa geçip sunucuda yüklü olmasını sağlatınız !!!');
 
 	$_SERVER['SERVER_ADDR']=='95.173.168.25' ? $adres='http://servis.gunerarik.com.tr/' : $adres='http://www.ci3.net/';
+	if($_SERVER['SERVER_NAME']=='servis.gunerarik.com.tr') {
+		die('Yanlış hostta değilmiyiz sence ?');
+	}
 
 	$config['base_url']						= $adres;
 	$config['index_page']					= '';
@@ -27,7 +30,7 @@
 	$config['controller_trigger']			= 'c';
 	$config['function_trigger']			= 'm';
 	$config['directory_trigger']			= 'd';
-	$config['log_threshold']				= 1;
+	$config['log_threshold']				= 0;
 	$config['log_path']						= '';
 	$config['log_file_extension']			= '';
 	$config['log_file_permissions']		= 0644;

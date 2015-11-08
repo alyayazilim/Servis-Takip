@@ -2,7 +2,6 @@
 	header("Content-type: text/html; charset=utf-8");
 if(!defined('BASEPATH')) exit('Bu Sayfaya Direk Erişim Sağlayamazsınız');
 
-
 	$active_group = 'mySunucu';
 	$query_builder = TRUE;
 

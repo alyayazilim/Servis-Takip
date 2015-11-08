@@ -45,6 +45,7 @@ class Sistem_yonetimi extends CI_Controller {
 		exit;
 	}
 
+	// SİSTEM AYARLARI
 	function sistem_ayar() {
 		$veri = array(
 			'gosterilecekSayfa'	=> 'sistem_ayar'
@@ -57,6 +58,7 @@ class Sistem_yonetimi extends CI_Controller {
 		$this->load->view('bakim_calismasi');
 	}
 
+	// SİSTEM DEĞİŞKENLERİ
 	function sistem_degisken() {
 		$this->load->model('sistem_model');
 		$firmaBilgi = $this->sistem_model->firmaBilgileriGetir();
@@ -128,45 +130,12 @@ class Sistem_yonetimi extends CI_Controller {
 		}
 	}
 
+	// CİHAZ TÜRLERİ
 	function cihaz_tur() {
 		$this->load->model('servis_model');
 		$veri = array(
 			'turVerileri'			=> $this->servis_model->cihazTurleri(),
 			'gosterilecekSayfa'	=> 'cihaz_tur'
-		);
-		$bilgi = array_merge($veri, $this->sistemSabit);
-		$this->load->view('taslak', $bilgi);
-	}
-
-	function markalar() {
-		$this->load->model('servis_model');
-		$veri = array(
-			'markaVerileri'		=> $this->servis_model->markalar(),
-			'gosterilecekSayfa'	=> 'markalar'
-		);
-		$bilgi = array_merge($veri, $this->sistemSabit);
-		$this->load->view('taslak', $bilgi);
-	}
-
-	function gorsel_ayar() {
-		$veri = array(
-			'gosterilecekSayfa'	=> 'gorsel_ayar'
-		);
-		$bilgi = array_merge($veri, $this->sistemSabit);
-		$this->load->view('taslak', $bilgi);
-	}
-
-	function kullanici_ayar() {
-		$veri = array(
-			'gosterilecekSayfa'	=> 'kullanici_ayar'
-		);
-		$bilgi = array_merge($veri, $this->sistemSabit);
-		$this->load->view('taslak', $bilgi);
-	}
-
-	function yonetici_ayar() {
-		$veri = array(
-			'gosterilecekSayfa'	=> 'yonetici_ayar'
 		);
 		$bilgi = array_merge($veri, $this->sistemSabit);
 		$this->load->view('taslak', $bilgi);
@@ -237,13 +206,110 @@ class Sistem_yonetimi extends CI_Controller {
 		redirect('sistem_yonetimi/cihaz_tur');
 	}
 
+	// MARKALAR
+	function markalar() {
+		$this->load->model('servis_model');
+		$veri = array(
+			'markaVerileri'		=> $this->servis_model->markalar(),
+			'gosterilecekSayfa'	=> 'markalar'
+		);
+		$bilgi = array_merge($veri, $this->sistemSabit);
+		$this->load->view('taslak', $bilgi);
+	}
+
+	function cihaz_marka_kaydet() {
+		$this->load->model('servis_model');
+		if($_FILES['marka_resim']['name']) {
+			$yeniDosyaAdi = $this->servis_model->dosyaAdiOlustur($ozNetlik=FALSE, $_FILES['marka_resim']['name']);
+			$ayar = array(
+				'upload_path'		=> 'resimler/markalar',
+				'allowed_types'	=> 'png',
+				'file_name'			=> $yeniDosyaAdi
+			);
+			$this->load->library('upload', $ayar);
+			if(!$this->upload->do_upload('marka_resim')) {
+				echo $this->upload->display_errors('<div class="formHatasi">', '</div>');
+			}
+			$cMarkaBilgi	= array(
+				'marka_adi'		=> $this->input->post('marka_adi', TRUE),
+				'marka_resim'	=> $yeniDosyaAdi
+			);
+		}
+		$this->load->model('sistem_model');
+		$this->sistem_model->cihazMarkaKaydet($cMarkaBilgi);
+		redirect('sistem_yonetimi/markalar');
+	}
+
+	function cihaz_marka_duzenle() {
+		$this->load->model('servis_model');
+		$cBilgiler = $this->servis_model->cihazMarkalari($this->input->post('marka_no', true));
+		foreach($cBilgiler AS $mBilgi) :
+			$markaResmi = $mBilgi->marka_resim;
+		endforeach;
+		if($_FILES['marka_resim']['name']) {
+			unlink('resimler/markalar/'.$markaResmi);
+			$yeniDosyaAdi = $this->servis_model->dosyaAdiOlustur($ozNetlik=FALSE, $_FILES['marka_resim']['name']);
+			$ayar = array(
+				'upload_path'		=> 'resimler/markalar',
+				'allowed_types'	=> 'png',
+				'file_name'			=> $yeniDosyaAdi
+			);
+			$this->load->library('upload', $ayar);
+			if(!$this->upload->do_upload('marka_resim')) {
+				echo $this->upload->display_errors('<div class="formHatasi">', '</div>');
+			}
+			$cMarkaBilgi	= array(
+				'marka_adi'		=> $this->input->post('marka_adi', TRUE),
+				'marka_resim'		=> $yeniDosyaAdi
+			);
+		} else {
+			$cMarkaBilgi	= array(
+				'marka_adi'		=> $this->input->post('marka_adi', TRUE),
+				'marka_resim'		=> $markaResmi
+			);
+		}
+		$this->load->model('sistem_model');
+		$this->sistem_model->cihazMarkaGuncelle($this->input->post('marka_no', true), $cMarkaBilgi);
+		redirect('sistem_yonetimi/markalar');
+	}
+
 	function marka_sil() {
 		$markaNo = $this->uri->segment(3);
 		$this->load->model('sistem_model');
 		$resimAdi = $this->sistem_model->cihazMarkaResmiGetir($markaNo);
 		unlink('resimler/markalar/'.$resimAdi);
-		$this->sistem_model->cihaz_tur_sil($turNo);
+		$this->sistem_model->cihaz_marka_sil($markaNo);
 		redirect('sistem_yonetimi/markalar');
+	}
+
+	// SİTE AYARLARI
+	function site_ayar() {
+		$veri = array(
+			'gosterilecekSayfa'	=> 'site_ayar'
+		);
+		$bilgi = array_merge($veri, $this->sistemSabit);
+		$this->load->view('taslak', $bilgi);
+	}
+
+	function sifre_degistir() {
+		error_reporting(0);
+		$mail_sunucusu	= $this->sistemSabit['mail_sunucusu'];
+		$mail_kull_adi	= $this->sistemSabit['mail_kull_adi'];
+		$mail_sifresi	= $this->sistemSabit['mail_sifresi'];
+		$imapBag			= imap_open('{mail.'.$mail_sunucusu.':143/notls}INBOX', $mail_kull_adi, $mail_sifresi);
+		$mailler			= imap_search($imapBag, 'SUBJECT "Sifre Degistir"');
+		foreach($mailler AS $mail) :
+			$bilgiler = imap_fetchbody($imapBag, $mail, 1);
+			$bilgi = explode('@*@', $bilgiler);
+			$kullaniciAdi = str_replace(array(' ', "\n", "\r", "\t"), '', $bilgi[0]);
+			$sifre = str_replace(array(' ', "\n", "\r", "\t"), '', $bilgi[1]);
+			$this->load->model('kullanici_model');
+			$this->kullanici_model->sifre_degistir($kullaniciAdi, $sifre);
+			echo '"'.$kullaniciAdi.'" - "'.$sifre.'"';
+			imap_delete($imapBag, $mail);
+		endforeach;
+		imap_expunge($imapBag);
+		imap_close($imapBag);
 	}
 
 }

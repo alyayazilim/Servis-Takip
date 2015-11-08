@@ -47,7 +47,7 @@ a#cikisTus {
 	height: 100%;
 	width: 100%;
 	background-color: #666;
-	position: absolute;
+	position: fixed;
 	z-index: 31;
 	opacity: 0.75;
 	display: none;
@@ -539,12 +539,25 @@ input[type="submit"] {
 	left: 50%;
 	transform: translate(-50%,-50%);
 }
-div#musteriKontrol {
+div#musteriKontrol, div#seriNoKontrol {
 	position: relative;
 }
-div#musteriKontrol > div#isimler {
+div#isimler {
+	z-index: 1;
 	position: absolute;
 	top: 24px;
+	left: 1px;
+	height: auto;
+	width: 400px;
+	background-color: #FFF;
+	display: none;
+	overflow-y: auto;
+	max-height: 200px;
+	border: 1px solid #4C4C4C;
+}
+div#serinolar {
+	position: absolute;
+	top: 184px;
 	left: 1px;
 	height: auto;
 	width: 400px;
@@ -580,7 +593,6 @@ ul.altLink > li > .secili {
 	text-align: center;
 	width: 300px;
 	height: auto;
-	padding: 90px 0px 0px 0px;
 	position: absolute;
 	border-radius: 10px;
 	border: 1px solid #D4D2D2;
@@ -590,13 +602,15 @@ ul.altLink > li > .secili {
 	left: 50%;
 	transform: translate(-50%,-50%);
 	padding-bottom: 10px;
+	text-align: center;
+	width: 300px;
+	padding: 10px 0px 0px 0px;
+	padding-bottom: 10px;
 }
 .sistem_degisken img {
-	position: absolute;
+	/*position: absolute;*/
 	top: 14px;
 	left: 120px;
-	width:64px;
-	height: 64px;
 }
 #sistem_degisken_form {
 	width: 250px;
@@ -608,12 +622,6 @@ ul.altLink > li > .secili {
 	width: 100px;
 	padding-right: 5px;
 
-}
-#dikeyOrtala > .sistem_degisken {
-	text-align: center;
-	width: 300px;
-	padding: 90px 0px 0px 0px;
-	padding-bottom: 10px;
 }
 #dikeyOrtala > .ortala {
 	border-radius: 10px;
@@ -627,32 +635,36 @@ ul.altLink > li > .secili {
 	transform: translate(-50%,-50%);
 }
 #dikeyOrtala > .cihaz_tur {
-	width: 500px;
+	width: 440px;
 	padding:2px;
+	min-height:220px;
 }
 .ctSil, .ctEkle {
 	width: 16px;
 	height: 16px;
 	float: left;
 	clear: both;
-	margin: 2px;
 	margin-left: 35px;
 	display: inline-block;
 }
 .cihaz_tur .ctIsim {
+	line-height: 14px;
 	margin: 2px;
 	width: 150px;
-	height: 22px;
+	height: 18px;
 	padding-left: 10px;
 	border: 1px solid #D4D2D2;
 	display: inline-block;
 	margin-left: 5px;
 	float: left;
 }
+.cihaz_tur .ctIsim:hover {
+	background-color: #CCC;
+}
 #turDokum {
 	position: absolute;
-	top: 24px;
-	right: 24px;
+	top: 20px;
+	right: 20px;
 	width: 192px;
 	height: 180px;
 	border: 1px solid #D4D2D2;
@@ -663,4 +675,64 @@ ul.altLink > li > .secili {
 .griinput {
 	width: 186px;
 	margin: 8px 0px 0px 4px;
+}
+#frmBilgi {
+	position: absolute;
+	color: #FFF;
+	font-size: 13px;
+	text-align: right;
+	right: 10px;
+	top: 5px;
+}
+#frmBilgi a {
+	text-decoration: none;
+	color: #fff;
+}
+#frmBilgi a:hover {
+	text-decoration: none;
+	color: #CCC;
+}
+.FisParcaEkle {
+	font-family: Titillium,Titillium-eot,Arial, Helvetica, sans-serif;
+	font-size: 13px;
+	font-style: normal;
+	line-height: 13px;
+	font-weight: normal;
+	color: #333;
+	text-decoration: none;
+	float: right;
+	height: 35px;
+	width: 100px;
+	margin-top: 5px;
+	margin-right: 3px;
+	margin-bottom: 10px;
+	margin-left: 10px;
+	cursor: pointer;
+	text-align: right;
+	background-image: url(../resimler/servis.png);
+	background-repeat: no-repeat;
+	background-position: 8px center;
+	background-color: #FFFFFF;
+	border: 1px solid #999;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	padding-top: 6px;
+	padding-right: 6px;
+	padding-bottom: 5px;
+	padding-left: 5px;
+	background-size: 20px;
+}
+#Degisecek {
+	display: none;
+	background-color: #ECFFEC;
+	width: 300px;
+	height: auto;
+	position: absolute;
+	left: 415px;
+	top: 44px;
+	padding: 5px;
+}
+#degisecek > div[id^='degisecek_'] {
+	margin-top: 2px;
 }

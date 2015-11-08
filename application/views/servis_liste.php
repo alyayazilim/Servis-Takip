@@ -9,7 +9,7 @@
 			<div id="kayit_form">
 				<div id="musteriKontrol">
 					<input class="fis_kayit_girdi" type="text" autocomplete="off" value="" id="musteri" name="musteri" onkeyup="hCD(\'musteri\'); kullaniciKontrol(this);" placeholder="Müşteri *" />
-				<div id="isimler" class="golge"></div>
+					<div id="isimler" class="golge"></div>
 				</div>
 				<input class="fis_kayit_girdi" type="text" value="" id="tel" name="tel" placeholder="Telefon *" onkeyup="sKontrol(this); hCD(\'tel\');"  maxlength="11" />
 				<input class="fis_kayit_girdi" type="text" value="" id="email" name="email" placeholder="E-Mail" />
@@ -23,7 +23,7 @@
 				<select class="fis_kayit_girdi select" name="marka" id="marka" onclick="hCD(\'marka\');">
 				<option value="0">Cihaz Markası *</option>';
 				foreach(@$markalar AS $marka) {
-					echo '<option value="'.@$marka->marka_id.'">'.@$marka->marka_adi.'</option>';
+					echo '<option value="'.@$marka->marka_no.'">'.@$marka->marka_adi.'</option>';
 				}
 				echo '</select>
 				<select class="fis_kayit_girdi select" name="cihaz" id="cihaz" onclick="hCD(\'cihaz\');">
@@ -34,7 +34,10 @@
 				echo '</select>
 				<input class="fis_kayit_girdi" type="text" id="urunKodu" name="urunKodu" value="" placeholder="Ürün Kodu" />
 				<input class="fis_kayit_girdi" type="text" id="urunAdi" name="urunAdi" value="" placeholder="Ürün Adı" />
-				<input class="fis_kayit_girdi" type="text" id="seriNo" name="seriNo" value="" placeholder="Seri No" />
+				<div id="seriNoKontrol">
+					<input class="fis_kayit_girdi" type="text" id="seriNo" name="seriNo" value="" placeholder="Seri No" onkeyup="seriNoKontrol(this);" autocomplete="off" />
+					<div id="serinolar" class="golge"></div>
+				</div>
 				<input class="fis_kayit_girdi" type="text" id="belgeTuru" name="belgeTuru" value="" placeholder="Belge Türü" />
 				<input class="fis_kayit_girdi tarih" type="text" autocomplete="off" id="garantiBaslangic" name="garantiBaslangic" value="" placeholder="Garanti Başlangıcı" />
 				<input class="fis_kayit_girdi tarih" type="text" autocomplete="off" id="teslimTarihi" name="teslimTarihi" value="" placeholder="Teslim Tarihi" />
@@ -45,7 +48,6 @@
 					echo '<option value="'.@$durum->durum_no.'">'.@$durum->durum_aciklama.'</option>';
 				}
 				echo '</select>
-
 				<textarea id="ariza" name="ariza" placeholder="Arıza" class="fis_kayit_girdi textAlani"></textarea>
 				<textarea id="arizaTanim" name="arizaTanim" placeholder="Arıza Tanımı" class="fis_kayit_girdi textAlani"></textarea>
 				<select class="fis_kayit_girdi select" id="servisSekli" name="servisSekli" value="">
@@ -68,14 +70,19 @@
 				<input type="hidden" id="gFisNo"name="gFisNo" value="">
 				<button id="kayit_buton" class="kayit_buton" onclick="yeniKayitFormKontrol();" type="submit" name="kaydet">Kaydet&nbsp;&nbsp;&nbsp;</button>
 				<button onclick="servisFisiEkleKapat(); formTemizle(\'yeniKayit\');" class="kayit_buton sol-hiza-kayit-buton" type="reset" name="iptal">İptal&nbsp;&nbsp;&nbsp;&nbsp;</button>
+				<button onclick="parcaEkle();" class="FisParcaEkle">Parça Ekle<button>
 				<div id="kayit_sonuc">
 					<img id="kaydediliyor" src="'.base_url().'resimler/loading.gif" />
 					<div id="hataMesaji">Kaydediliyor !..</div>
 				</div>
-				
-				</div>
 			</div>
-		</div>';
+			<div id="Degisecek" class="golge"></div>
+		</div>
+	</div>';
+
+	function tel($tel) {
+		return substr($tel,0,1).'('.substr($tel,1,3).") ".substr($tel,4,3)." ".substr($tel,7,2)." ".substr($tel,9,2);
+	}
 
 	echo '<div class="islemler">
 		<a href="javascript:;" onclick="servisFisiEkle(0, 0);" title="Servis Ekle"><img src="'.base_url().'resimler/ekle.png" alt="Yeni Servis Ekle"></a>
@@ -126,10 +133,10 @@
 		echo '		<td class="isNumarasi">'.$fis->is_numarasi.'</td>'."\r\n";
 		echo '		<td class="gelisTarihi">'.date('d.m.Y', $fis->gelis_tarihi).'</td>'."\r\n";
 		echo '		<td class="musteriAdi">'.$fis->musteri_adi.'</td>'."\r\n";
-		echo '		<td class="tel">'.$fis->tel.'</td>'."\r\n";
+		echo '		<td class="tel">'.tel($fis->tel).'</td>'."\r\n";
 		echo '		<td class="email">'.(strlen($fis->email) ? $fis->email : '').'</td>'."\r\n";
 		echo '		<td class="durum"><img src="'.base_url().'resimler/durumlar/durum_'.$fis->durum.'.png" width="30"> '.$fis->durum_aciklama.'</td>
-		<td class="urunTur"><img src="'.base_url().'resimler/markalar/marka_'.$fis->marka.'.png" width="30">&nbsp;<img src="'.base_url().'resimler/cihazlar/'.$fis->tur_resim.'"></td>
+		<td class="urunTur"><img src="'.base_url().'resimler/markalar/'.$fis->marka_resim.'" width="30">&nbsp;<img src="'.base_url().'resimler/cihazlar/'.$fis->tur_resim.'"></td>
 		<td class="urunKodu">'.$fis->urun_kodu.'</td>
 		<td class="urunAdi">'.$fis->urun_adi.'</td>
 		<td class="seriNo">'.$fis->seri_no.'</td>
